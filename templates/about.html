@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}About | HeartCare AI{% endblock %}
+{% block content %}
+<section class="about-hero">
+    <div class="about-hero-copy">
+        <p class="eyebrow about-eyebrow"><span aria-hidden="true"></span> About HeartCare AI</p>
+        <h1>Heart disease prediction made <span>easier to understand.</span></h1>
+        <p class="lead">
+            HeartCare AI is a B.Tech final year project that combines Flask, Python,
+            machine learning, and a guided web interface to support educational heart
+            disease risk screening.
+        </p>
+        <div class="about-stat-row">
+            <div class="about-stat-tile">
+                <strong>91.85%</strong>
+                <span>Model accuracy</span>
+            </div>
+            <div class="about-stat-tile">
+                <strong>95.33%</strong>
+                <span>ROC AUC score</span>
+            </div>
+            <div class="about-stat-tile">
+                <strong>11</strong>
+                <span>Features used</span>
+            </div>
+        </div>
+    </div>
+    <div class="about-highlight-panel">
+        <div class="ecg-panel" aria-hidden="true">
+            <svg viewBox="0 0 420 150" role="img">
+                <path class="ecg-grid-line" d="M20 40H400M20 75H400M20 110H400"></path>
+                <path class="ecg-grid-line vertical" d="M75 22V128M150 22V128M225 22V128M300 22V128M375 22V128"></path>
+                <path class="ecg-line" d="M22 86H78L94 86L108 54L126 116L145 86H185L198 86L214 35L238 124L260 86H320L337 68L354 86H398"></path>
+            </svg>
+        </div>
+        <div class="about-chip-stack">
+            <span><i class="chip-dot orange"></i>Flask + Python</span>
+            <span><i class="chip-dot green"></i>KNN · Random Forest · XGBoost</span>
+            <span><i class="chip-dot purple"></i>SQLite database</span>
+        </div>
+        <div class="about-meta-grid">
+            <div class="about-meta-card">
+                <span>Project Type</span>
+                <strong>B.Tech Final Year</strong>
+            </div>
+            <div class="about-meta-card">
+                <span>Institution</span>
+                <strong>G.E.C Buxar</strong>
+            </div>
+            <div class="about-meta-card">
+                <span>Department</span>
+                <strong>ECE</strong>
+            </div>
+            <div class="about-meta-card">
+                <span>Year</span>
+                <strong>2026</strong>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="section-heading center-heading">
+        <p class="eyebrow">Project Focus</p>
+        <h2>Built for learning, clarity, and practical screening workflows.</h2>
+    </div>
+    <div class="value-grid">
+        <article class="card value-card interactive-card">
+            <div class="status-icon small-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 5h12v14H6z"></path>
+                    <path d="M9 9h6"></path>
+                    <path d="M9 13h6"></path>
+                </svg>
+            </div>
+            <h3>Guided Prediction</h3>
+            <p>Users can enter clinical indicators through a structured form and receive a clear screening output.</p>
+        </article>
+        <article class="card value-card interactive-card">
+            <div class="status-icon small-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 18h16"></path>
+                    <path d="M7 15l3-4 3 2 4-6"></path>
+                </svg>
+            </div>
+            <h3>ML Comparison</h3>
+            <p>The project compares KNN, Random Forest, and XGBoost to select a strong prediction model.</p>
+        </article>
+        <article class="card value-card interactive-card">
+            <div class="status-icon small-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 19V7l7-3 7 3v12"></path>
+                    <path d="M9 12h6"></path>
+                    <path d="M12 9v6"></path>
+                </svg>
+            </div>
+            <h3>Admin Supervision</h3>
+            <p>Admins can review users, monitor prediction history, and supervise model information from one dashboard.</p>
+        </article>
+    </div>
+</section>
+
+<section class="team-section about-team" id="team">
+    <div class="section-heading center-heading">
+        <p class="eyebrow">The People Behind It</p>
+        <h2>Meet the team</h2>
+        <p class="team-subheading">Three students, one mission - making heart disease prediction accessible.</p>
+        <span class="team-divider" aria-hidden="true"></span>
+    </div>
+
+    <div class="team-grid">
+        <article class="card team-card interactive-card">
+            <div class="team-card-head">
+                <div class="team-photo avatar-coral">
+                    <img src="{{ url_for('static', filename='images/team-rajanshu.jpeg') }}" alt="Rajanshu Priyadarshi">
+                </div>
+                <div>
+                    <h3>Rajanshu Priyadarshi (ECE)</h3>
+                    <p>Full-Stack Developer</p>
+                </div>
+            </div>
+            <div class="team-tags">
+                <span>Flask / Python</span>
+                <span>Frontend UI</span>
+                <span>ML Integration</span>
+            </div>
+            <p class="team-description">Built the complete web application - from user auth and prediction API to the admin dashboard and UI design.</p>
+        </article>
+
+        <article class="card team-card interactive-card">
+            <div class="team-card-head">
+                <div class="team-photo avatar-teal">
+                    <img src="{{ url_for('static', filename='images/team-dablu.jpeg') }}" alt="Dablu Kumar">
+                </div>
+                <div>
+                    <h3>Dablu Kumar (ECE)</h3>
+                    <p>Data Engineer</p>
+                </div>
+            </div>
+            <div class="team-tags">
+                <span>Data Collection</span>
+                <span>Preprocessing</span>
+                <span>Feature Engineering</span>
+            </div>
+            <p class="team-description">Sourced and cleaned the heart disease dataset, handled missing values, normalisation, and prepared features for model training.</p>
+        </article>
+
+        <article class="card team-card interactive-card">
+            <div class="team-card-head">
+                <div class="team-photo avatar-purple">
+                    <img src="{{ url_for('static', filename='images/team-anamika.jpeg') }}" alt="Anamika Kumari">
+                </div>
+                <div>
+                    <h3>Anamika Kumari (ECE)</h3>
+                    <p>ML Researcher</p>
+                </div>
+            </div>
+            <div class="team-tags">
+                <span>Model Research</span>
+                <span>Literature Review</span>
+                <span>Documentation</span>
+            </div>
+            <p class="team-description">Researched ML algorithms, compared KNN, Random Forest and XGBoost, and prepared the project report and documentation.</p>
+        </article>
+    </div>
+
+    <article class="card guide-card interactive-card">
+        <div class="team-card-head">
+            <div class="team-photo avatar-blue">
+                <img src="{{ url_for('static', filename='images/guide-shruti-verma.png') }}" alt="Prof. Shruti Verma">
+            </div>
+            <div>
+                <p class="eyebrow">Project Guide</p>
+                <h3>Prof. Shruti Verma</h3>
+                <p>Assistant Professor</p>
+                <p>Electronics &amp; Communication Engineering (G.E.C BUXAR)</p>
+            </div>
+        </div>
+        <span class="guide-badge">Guide</span>
+    </article>
+
+    <p class="team-footer-tag">B.Tech Final Year Project &middot; HeartCare AI &middot; 2026</p>
+</section>
+{% endblock %}

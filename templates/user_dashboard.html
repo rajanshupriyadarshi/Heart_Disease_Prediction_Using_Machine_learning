@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | HeartCare AI{% endblock %}
+{% block content %}
+<div class="prediction-overlay" id="predictionOverlay" aria-hidden="true">
+    <div class="overlay-card">
+        <div class="heart-loader">&hearts;</div>
+        <h2>Analyzing Patient Data...</h2>
+        <p>Processing medical indicators...</p>
+    </div>
+</div>
+
+<section class="dashboard-head">
+    <div class="card welcome-card">
+        <p class="eyebrow">Welcome Back</p>
+        <h1>{{ current_user_name }}</h1>
+        <p class="lead">Complete the clinical form below to estimate heart disease risk and save the result to your account.</p>
+    </div>
+    <div class="card note-card">
+        <h2>Important Note</h2>
+        <p>This result is for educational screening support only and should not replace professional medical advice.</p>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+    <form class="card prediction-form" method="post">
+        <div class="section-heading">
+            <p class="eyebrow">Prediction Form</p>
+            <h2>Enter patient details</h2>
+        </div>
+        {% for section in form_sections %}
+            <div class="form-section">
+                <h3>{{ section.title }}</h3>
+                <div class="form-grid">
+                    {% for feature in section.fields %}
+                        {% set config = field_config[feature] %}
+                        <label>
+                            <span class="label-row">
+                                {{ field_labels[feature] }}
+                                <span class="tooltip-chip" title="{{ config.tooltip }}">i</span>
+                            </span>
+                            {% if config.type == "select" %}
+                                <select name="{{ feature }}" required>
+                                    {% for value, text in config.options %}
+                                        <option value="{{ value }}" {% if form_values[feature] == value %}selected{% endif %}>{{ text }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <input
+                                    type="number"
+                                    name="{{ feature }}"
+                                    value="{{ form_values[feature] }}"
+                                    min="{{ config.min }}"
+                                    max="{{ config.max }}"
+                                    step="{{ config.step }}"
+                                    required
+                                >
+                            {% endif %}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="button-row">
+            <button class="button primary" type="submit" name="action" value="predict">Predict Disease Risk</button>
+            <button class="button ghost" type="submit" name="action" value="clear">Clear Form</button>
+        </div>
+    </form>
+
+    <aside class="card result-card">
+        <div class="section-heading">
+            <p class="eyebrow">Prediction Result</p>
+            <h2>Latest screening output</h2>
+        </div>
+        {% if prediction_result %}
+            <div class="result-pill {{ prediction_result.risk_class }}">
+                {{ prediction_result.label }} - {{ prediction_result.risk_level }} Risk
+            </div>
+            <div class="risk-gauge {{ prediction_result.risk_class }}" aria-label="Heart disease risk {{ prediction_result.probability|pct }}">
+                <svg viewBox="0 0 220 130" role="img">
+                    <path class="risk-gauge-track" pathLength="100" d="M30 110 A80 80 0 0 1 190 110"></path>
+                    <path class="risk-gauge-fill" pathLength="100" d="M30 110 A80 80 0 0 1 190 110" style="stroke-dasharray: {{ prediction_result.probability * 100 }} 100;"></path>
+                </svg>
+                <div class="risk-gauge-label">
+                    <strong>{{ prediction_result.probability|pct }}</strong>
+                    <span>Risk</span>
+                </div>
+            </div>
+            <p class="helper-text risk-copy">Heart Disease Risk: {{ prediction_result.probability|pct }}</p>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <span>Probability</span>
+                    <strong>{{ prediction_result.probability|pct }}</strong>
+                </div>
+                <div class="metric-card">
+                    <span>Confidence</span>
+                    <strong>{{ prediction_result.confidence|pct }}</strong>
+                </div>
+            </div>
+            <div class="result-summary">
+                <h3>Recommendation</h3>
+                <p>{{ prediction_result.recommendation }}</p>
+            </div>
+            {% if prediction_result.safety_note %}
+            <div class="result-summary">
+                <h3>Clinical Safety Review</h3>
+                <p>{{ prediction_result.safety_note }}</p>
+            </div>
+            {% endif %}
+            <div class="result-summary">
+                <h3>Prediction Reliability</h3>
+                <p><strong>{{ prediction_result.reliability_level }}</strong></p>
+                <p>{{ prediction_result.reliability_message }}</p>
+            </div>
+            <div class="result-summary">
+                <h3>{{ prediction_result.tips_title }}</h3>
+                <ul class="explanation-list">
+                    {% for item in prediction_result.tips %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="result-summary">
+                <h3>Key contributing factors</h3>
+                {% if prediction_result.explanations %}
+                    <ul class="explanation-list">
+                        {% for item in prediction_result.explanations %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No single factor stands out strongly in this prediction.</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="helper-text">Submit the form to view your latest prediction, risk meter, and recommendation here.</p>
+        {% endif %}
+    </aside>
+</section>
+
+<section class="card table-card">
+    <div class="section-heading">
+        <p class="eyebrow">History</p>
+        <h2>Your saved predictions</h2>
+    </div>
+    {% if history %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Prediction</th>
+                        <th>Probability</th>
+                        <th>Label</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in history %}
+                        <tr>
+                            <td>{{ row["id"] }}</td>
+                            <td>{{ row["prediction"] }}</td>
+                            <td class="{{ 'probability-alert' if row['probability'] > 0.4 else '' }}">{{ row["probability"]|pct }}</td>
+                            <td>
+                                <span class="label-badge {{ 'label-risk' if row['label'] == 'Heart Disease Detected' else 'label-safe' }}">
+                                    {{ row["label"] }}
+                                </span>
+                            </td>
+                            <td>{{ row["created_at"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="helper-text">No predictions saved yet.</p>
+    {% endif %}
+</section>
+
+<script>
+    const predictionForm = document.querySelector(".prediction-form");
+    const predictionOverlay = document.getElementById("predictionOverlay");
+
+    if (predictionForm && predictionOverlay) {
+        predictionForm.addEventListener("submit", function (event) {
+            const trigger = event.submitter;
+            if (trigger && trigger.value === "predict") {
+                predictionOverlay.classList.add("is-visible");
+                predictionOverlay.setAttribute("aria-hidden", "false");
+            }
+        });
+    }
+</script>
+{% endblock %}

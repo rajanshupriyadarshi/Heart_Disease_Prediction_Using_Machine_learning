@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}User Manual | HeartCare AI{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-copy card">
+        <p class="eyebrow">User Manual</p>
+        <h1>Understand every field before you predict.</h1>
+        <p class="lead">
+            This user manual explains what each prediction form field means and what every option stands for,
+            so users can choose the correct values with confidence.
+        </p>
+    </div>
+    <div class="hero-panel card">
+        <p class="eyebrow">How to Use</p>
+        <div class="flow-stack">
+            <div class="flow-step">
+                <span class="flow-number">1</span>
+                <div>
+                    <strong>Read the section</strong>
+                    <p>Each field is grouped the same way as the actual prediction form.</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <span class="flow-number">2</span>
+                <div>
+                    <strong>Check the options</strong>
+                    <p>Dropdown values are explained in plain language.</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <span class="flow-number">3</span>
+                <div>
+                    <strong>Fill the form correctly</strong>
+                    <p>Return to the prediction page once you understand the medical inputs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="manual-layout">
+    <aside class="manual-nav" aria-label="Manual sections">
+        <p class="eyebrow">Sections</p>
+        {% for section in form_sections %}
+            <a class="{{ 'active' if loop.first else '' }}" href="#manual-section-{{ loop.index }}">{{ section.title }}</a>
+        {% endfor %}
+    </aside>
+
+    <div class="manual-content">
+        {% for section in form_sections %}
+            <section class="manual-section-panel" id="manual-section-{{ loop.index }}">
+                <div class="section-heading">
+                    <p class="eyebrow">User Manual Section</p>
+                    <h2>{{ section.title }}</h2>
+                </div>
+
+                <div class="manual-field-stack">
+                    {% for feature in section.fields %}
+                        {% set config = field_config[feature] %}
+                        <details class="manual-field" {% if feature in ["ChestPainType", "RestingECG", "Oldpeak", "ST_Slope"] %}open{% endif %}>
+                            <summary>
+                                <span>
+                                    <strong>{{ field_labels[feature] }}</strong>
+                                    <small>{{ manual_notes[feature] }}</small>
+                                </span>
+                                <em>{{ "Number" if config.type == "number" else "Options" }}</em>
+                            </summary>
+
+                            <div class="manual-field-body">
+                                {% if config.type == "number" %}
+                                    <p class="manual-meta"><strong>Allowed Range:</strong> {{ config.min }} to {{ config.max }}</p>
+                                    {% set number_note = field_number_notes.get(feature) %}
+                                    {% if number_note %}
+                                        <div class="option-card-grid compact">
+                                            <div class="option-card">
+                                                <p class="option-summary">{{ number_note.summary }}</p>
+                                                <div class="option-example-stack">
+                                                    {% for label, copy in number_note.boxes %}
+                                                        <div class="option-example-box">
+                                                            <span>{{ label }}</span>
+                                                            <strong>{{ copy }}</strong>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <p class="option-footer">{{ number_note.footer }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="option-chip-row">
+                                        {% for value, text in config.options %}
+                                            <span>{{ text }}</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if field_option_notes.get(feature) %}
+                                        <div class="option-card-grid">
+                                            {% for value, text in config.options %}
+                                                {% set option_note = field_option_notes.get(feature, {}).get(value) %}
+                                                <div class="option-card">
+                                                    <div class="option-card-head">
+                                                        <h4>{{ text }}</h4>
+                                                        <span>{{ value }}</span>
+                                                    </div>
+                                                    {% if option_note %}
+                                                        <p class="option-summary">{{ option_note.summary }}</p>
+                                                        <div class="option-example-stack">
+                                                            {% for label, copy in option_note.boxes %}
+                                                                <div class="option-example-box">
+                                                                    <span>{{ label }}</span>
+                                                                    <strong>{{ copy }}</strong>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <p class="option-footer">{{ option_note.footer }}</p>
+                                                    {% else %}
+                                                        <p class="option-summary">Choose this option when it matches the patient's information.</p>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </details>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+    </div>
+</section>
+<script>
+    const manualLinks = Array.from(document.querySelectorAll(".manual-nav a"));
+    const manualSections = Array.from(document.querySelectorAll(".manual-section-panel"));
+
+    function setActiveManualLink(sectionId) {
+        manualLinks.forEach((link) => {
+            link.classList.toggle("active", link.getAttribute("href") === `#${sectionId}`);
+        });
+    }
+
+    manualLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            const sectionId = link.getAttribute("href").slice(1);
+            setActiveManualLink(sectionId);
+        });
+    });
+
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visibleEntry = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+                if (visibleEntry) {
+                    setActiveManualLink(visibleEntry.target.id);
+                }
+            },
+            {
+                rootMargin: "-20% 0px -60% 0px",
+                threshold: [0.2, 0.45, 0.7],
+            }
+        );
+
+        manualSections.forEach((section) => observer.observe(section));
+    }
+</script>
+{% endblock %}

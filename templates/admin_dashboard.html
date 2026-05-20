@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | HeartCare AI{% endblock %}
+{% block content %}
+<section class="dashboard-head">
+    <div class="card welcome-card">
+        <p class="eyebrow">Admin Dashboard</p>
+        <h1>System overview</h1>
+        <p class="lead">Review registered users, monitor prediction activity, and supervise the platform.</p>
+    </div>
+    <div class="stats-row">
+        <div class="card stat-card">
+            <span>Total Users</span>
+            <strong>{{ total_users }}</strong>
+        </div>
+        <div class="card stat-card">
+            <span>Admin Accounts</span>
+            <strong>{{ total_admins }}</strong>
+        </div>
+        <div class="card stat-card">
+            <span>Total Predictions</span>
+            <strong>{{ predictions|length }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="card table-card">
+    <div class="section-heading">
+        <p class="eyebrow">Model Information</p>
+        <h2>Prediction system details</h2>
+    </div>
+    <div class="admin-model-toolbar">
+        <div class="admin-model-meta">
+            <span class="helper-text">Current selected algorithm: <strong>{{ model_info.algorithm }}</strong></span>
+            <span class="helper-text">Last trained: <strong>{{ model_info.last_trained or "Unknown" }}</strong></span>
+        </div>
+        <form method="post" action="{{ url_for('retrain_model') }}" onsubmit="return confirm('Retrain the model using the latest dataset now?');">
+            <button class="button primary" type="submit">Retrain Model</button>
+        </form>
+    </div>
+    <div class="metric-grid">
+        <div class="metric-card">
+            <span>Selected Algorithm</span>
+            <strong>{{ model_info.algorithm }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Dataset</span>
+            <strong>{{ model_info.dataset }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Accuracy</span>
+            <strong>{{ model_info.accuracy|pct if model_info.accuracy is not none else "N/A" }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>F1 Score</span>
+            <strong>{{ model_info.f1_score|pct if model_info.f1_score is not none else "N/A" }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>ROC AUC</span>
+            <strong>{{ model_info.roc_auc|pct if model_info.roc_auc is not none else "N/A" }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Features Used</span>
+            <strong>{{ model_info.features_used }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Last Trained</span>
+            <strong>{{ model_info.last_trained or "Unknown" }}</strong>
+        </div>
+    </div>
+    {% if model_info.algorithms %}
+        <div class="result-summary model-info chart-panel">
+            <h3>Algorithm Comparison</h3>
+            <div class="chart-wrap">
+                <canvas id="algorithmChart" height="150"></canvas>
+            </div>
+            <div class="chart-legend" aria-label="Algorithm chart legend">
+                <span><i class="legend-swatch accuracy"></i> Accuracy</span>
+                <span><i class="legend-swatch f1"></i> F1 Score</span>
+                <span><i class="legend-swatch roc"></i> ROC AUC</span>
+            </div>
+        </div>
+    {% endif %}
+</section>
+
+<section class="card table-card">
+    <div class="section-heading">
+        <p class="eyebrow">Users</p>
+        <h2>Registered accounts</h2>
+    </div>
+    {% if users %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in users %}
+                        <tr>
+                            <td>{{ row["id"] }}</td>
+                            <td>{{ row["full_name"] }}</td>
+                            <td>{{ row["email"] }}</td>
+                            <td>{{ row["phone"] }}</td>
+                            <td>{{ row["role"] }}</td>
+                            <td>{{ row["created_at"] }}</td>
+                            <td>
+                                {% if row["role"] == "user" %}
+                                    <div class="action-stack">
+                                        <form method="post" action="{{ url_for('clear_history', user_id=row['id']) }}" onsubmit="return confirm('Clear this user history only?');">
+                                            <button class="button ghost small-button" type="submit">Clear History</button>
+                                        </form>
+                                        <form method="post" action="{{ url_for('delete_user', user_id=row['id']) }}" onsubmit="return confirm('Delete this user and all related data?');">
+                                            <button class="button danger small-button" type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <span class="helper-text">Protected</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="helper-text">No users found.</p>
+    {% endif %}
+</section>
+
+<section class="card table-card">
+    <div class="section-heading">
+        <p class="eyebrow">Prediction Activity</p>
+        <h2>All saved predictions</h2>
+    </div>
+    {% if predictions %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Prediction</th>
+                        <th>Probability</th>
+                        <th>Label</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in predictions %}
+                        <tr>
+                            <td>{{ row["id"] }}</td>
+                            <td>{{ row["full_name"] }}</td>
+                            <td>{{ row["email"] }}</td>
+                            <td>{{ row["prediction"] }}</td>
+                            <td class="{{ 'probability-alert' if row['probability'] > 0.4 else '' }}">{{ row["probability"]|pct }}</td>
+                            <td>
+                                <span class="label-badge {{ 'label-risk' if row['label'] == 'Heart Disease Detected' else 'label-safe' }}">
+                                    {{ row["label"] }}
+                                </span>
+                            </td>
+                            <td>{{ row["created_at"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="helper-text">No predictions have been recorded yet.</p>
+    {% endif %}
+</section>
+{% if model_info.algorithms %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const algorithmMetrics = {{ model_info.algorithms|tojson }};
+    const algorithmNames = ["KNN", "Random Forest", "XGBoost"].filter((name) => algorithmMetrics[name]);
+    const metricValue = (name, key) => {
+        const value = algorithmMetrics[name][key];
+        return value === null || value === undefined ? null : Number((value * 100).toFixed(2));
+    };
+    const chartCanvas = document.getElementById("algorithmChart");
+
+    if (chartCanvas && window.Chart) {
+        new Chart(chartCanvas, {
+            type: "bar",
+            data: {
+                labels: algorithmNames,
+                datasets: [
+                    {
+                        label: "Accuracy",
+                        data: algorithmNames.map((name) => metricValue(name, "accuracy")),
+                        backgroundColor: "#D85A30",
+                        borderRadius: 8
+                    },
+                    {
+                        label: "F1 Score",
+                        data: algorithmNames.map((name) => metricValue(name, "f1_score")),
+                        backgroundColor: "#2F855A",
+                        borderRadius: 8
+                    },
+                    {
+                        label: "ROC AUC",
+                        data: algorithmNames.map((name) => metricValue(name, "roc_auc")),
+                        backgroundColor: "#2563EB",
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.dataset.label}: ${context.parsed.y}%`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 85,
+                        max: 100,
+                        ticks: {
+                            callback: (value) => `${value}%`
+                        },
+                        grid: {
+                            color: "rgba(131, 81, 54, 0.12)"
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endif %}
+{% endblock %}

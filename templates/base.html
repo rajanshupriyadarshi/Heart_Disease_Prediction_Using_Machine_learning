@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}HeartCare AI{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <a class="brand" href="{{ url_for('index') }}" aria-label="HeartCare AI home">
+                <span class="brand-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 12h4l2-5 4 10 2-5h6"></path>
+                    </svg>
+                </span>
+                <span>HeartCare AI</span>
+            </a>
+            <nav class="nav-links">
+                {% if current_role == 'user' %}
+                    <a class="{{ 'active' if request.endpoint == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    <a class="{{ 'active' if request.endpoint == 'about' else '' }}" href="{{ url_for('about') }}">About</a>
+                    <a class="{{ 'active' if request.endpoint == 'manual' else '' }}" href="{{ url_for('manual') }}">User Manual</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% elif current_role == 'admin' %}
+                    <a class="{{ 'active' if request.endpoint == 'admin_dashboard' else '' }}" href="{{ url_for('admin_dashboard') }}">Admin</a>
+                    <a class="{{ 'active' if request.endpoint == 'about' else '' }}" href="{{ url_for('about') }}">About</a>
+                    <a class="{{ 'active' if request.endpoint == 'manual' else '' }}" href="{{ url_for('manual') }}">User Manual</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <a class="{{ 'active' if request.endpoint == 'register' else '' }}" href="{{ url_for('register') }}">Register</a>
+                    <a class="{{ 'active' if request.endpoint == 'login' else '' }}" href="{{ url_for('login') }}">User Login</a>
+                    <a class="{{ 'active' if request.endpoint == 'manual' else '' }}" href="{{ url_for('manual') }}">User Manual</a>
+                    <a class="{{ 'active' if request.endpoint == 'admin_login' else '' }}" href="{{ url_for('admin_login') }}">Admin Login</a>
+                    <a class="{{ 'active' if request.endpoint == 'about' else '' }}" href="{{ url_for('about') }}">About</a>
+                {% endif %}
+            </nav>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+        <footer class="site-footer">
+            <div class="footer-brand">
+                <span class="brand-icon small" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 12h4l2-5 4 10 2-5h6"></path>
+                    </svg>
+                </span>
+                <span>HeartCare AI</span>
+            </div>
+            <p>For educational and screening purposes only. Not a substitute for professional medical advice.</p>
+            <span class="footer-copy">&copy; 2026 HeartCare AI</span>
+        </footer>
+    </div>
+</body>
+</html>

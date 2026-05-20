@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}HeartCare AI{% endblock %}
+{% block content %}
+<section class="home-hero">
+    <div class="home-copy card interactive-card">
+        <p class="eyebrow">AI-powered Clinical Decision Support System</p>
+        <h1>Professional <span class="hero-highlight">Heart Disease</span> Screening</h1>
+        <p class="lead compact-lead">
+            AI-powered risk prediction with clear insights, reliability scoring,
+            and actionable health guidance.
+        </p>
+        <p class="trust-note">Built using clinically inspired datasets and machine learning models for educational and early risk screening support.</p>
+        <div class="hero-actions">
+            <a class="button primary large-button" href="{{ url_for('register') }}">Create Account</a>
+            <a class="button ghost large-button" href="{{ url_for('login') }}">Login</a>
+            <a class="text-button" href="{{ url_for('manual') }}">User Manual</a>
+        </div>
+    </div>
+
+    <div class="card hero-visual-card interactive-card">
+        <div class="ecg-panel" aria-hidden="true">
+            <svg viewBox="0 0 420 150" role="img">
+                <path class="ecg-grid-line" d="M20 40H400M20 75H400M20 110H400"></path>
+                <path class="ecg-grid-line vertical" d="M75 22V128M150 22V128M225 22V128M300 22V128M375 22V128"></path>
+                <path class="ecg-line" d="M22 86H78L94 86L108 54L126 116L145 86H185L198 86L214 35L238 124L260 86H320L337 68L354 86H398"></path>
+            </svg>
+        </div>
+        <div class="hero-stat-grid">
+            <div class="hero-stat-tile">
+                <span>Model Accuracy</span>
+                <strong>91.85%</strong>
+            </div>
+            <div class="hero-stat-tile">
+                <span>ROC AUC</span>
+                <strong>95.33%</strong>
+            </div>
+        </div>
+        <div class="hero-flow-note">
+            <span class="status-dot"></span>
+            <span>System operational: Register -> Login -> Predict</span>
+        </div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="section-heading center-heading">
+        <p class="eyebrow">Why This Platform Works</p>
+        <h2>Designed for clarity, confidence, and real usability.</h2>
+    </div>
+    <div class="value-grid">
+        <article class="card value-card interactive-card">
+            <div class="status-icon small-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 5h12v14H6z"></path>
+                    <path d="M9 9h6"></path>
+                    <path d="M9 13h6"></path>
+                </svg>
+            </div>
+            <h3>Clinical Clarity</h3>
+            <p>Organized medical input fields make the form easy to understand and complete.</p>
+        </article>
+        <article class="card value-card interactive-card">
+            <div class="status-icon small-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 18h16"></path>
+                    <path d="M7 15l3-4 3 2 4-6"></path>
+                </svg>
+            </div>
+            <h3>Safer Interpretation</h3>
+            <p>Predictions include probability, reliability notes, and health guidance to reduce confusion.</p>
+        </article>
+        <article class="card value-card interactive-card">
+            <div class="status-icon small-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 19V7l7-3 7 3v12"></path>
+                    <path d="M9 12h6"></path>
+                    <path d="M12 9v6"></path>
+                </svg>
+            </div>
+            <h3>Admin Dashboard</h3>
+            <p>Admins can monitor users, clear history, compare models, and manage records securely.</p>
+        </article>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="section-heading center-heading">
+        <p class="eyebrow">How It Works</p>
+        <h2>Three simple steps from first visit to prediction.</h2>
+    </div>
+    <div class="workflow-grid">
+        <article class="card workflow-card interactive-card">
+            <span class="flow-number">1</span>
+            <h3>Register</h3>
+            <p>Create your account with full name, email, phone number, and password.</p>
+        </article>
+        <article class="card workflow-card interactive-card">
+            <span class="flow-number">2</span>
+            <h3>Enter Data</h3>
+            <p>Fill in the guided medical form using the User Manual whenever you need help.</p>
+        </article>
+        <article class="card workflow-card interactive-card">
+            <span class="flow-number">3</span>
+            <h3>Get Prediction</h3>
+            <p>Review the risk result, reliability score, health tips, and next-step recommendation.</p>
+        </article>
+    </div>
+</section>
+
+<section class="card start-panel">
+    <div class="section-heading center-heading">
+        <p class="eyebrow">Start Now</p>
+        <h2>New here?</h2>
+    </div>
+    <p class="start-copy">Start your heart risk assessment in seconds.</p>
+    <div class="start-steps">
+        <span>1. Read User Manual</span>
+        <span>2. Create Account</span>
+        <span>3. Start Prediction</span>
+    </div>
+    <div class="hero-actions center-actions">
+        <a class="button ghost large-button" href="{{ url_for('manual') }}">View Manual</a>
+        <a class="button primary large-button" href="{{ url_for('register') }}">Get Started</a>
+    </div>
+</section>
+
+<section class="card project-credit-panel">
+    <p>A B.Tech final year project by</p>
+    <h2 class="project-credit-names">
+        <span>Rajanshu Priyadarshi</span>
+        <span>Dablu Kumar</span>
+        <span>Anamika Kumari</span>
+    </h2>
+    <p class="project-guide-line">
+        Guided by Asst. Prof <span>Ms. Shruti Verma</span>&nbsp; | &nbsp;ECE, G.E.C Buxar&nbsp; &middot; &nbsp;2026
+    </p>
+    <a class="project-credit-link" href="{{ url_for('about') }}#team">Meet the team <span aria-hidden="true">-&gt;</span></a>
+</section>
+{% endblock %}

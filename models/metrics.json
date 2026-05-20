@@ -1,0 +1,42 @@
+{
+  "selected_algorithm": "KNN",
+  "accuracy": 0.9184782608695652,
+  "f1_score": 0.926829268292683,
+  "roc_auc": 0.95331181252989,
+  "trained_at": "2026-05-19T18:24:11.242791+05:30",
+  "classification_report": "              precision    recall  f1-score   support\n\n           0       0.91      0.90      0.91        82\n           1       0.92      0.93      0.93       102\n\n    accuracy                           0.92       184\n   macro avg       0.92      0.92      0.92       184\nweighted avg       0.92      0.92      0.92       184\n",
+  "algorithms": {
+    "KNN": {
+      "accuracy": 0.9184782608695652,
+      "f1_score": 0.926829268292683,
+      "roc_auc": 0.95331181252989,
+      "details": {
+        "n_neighbors": 7,
+        "weights": "distance",
+        "scaling": "StandardScaler"
+      }
+    },
+    "Random Forest": {
+      "accuracy": 0.907608695652174,
+      "f1_score": 0.9186602870813397,
+      "roc_auc": 0.9318507890961263,
+      "details": {
+        "n_estimators": 300,
+        "max_depth": 8,
+        "min_samples_leaf": 2
+      }
+    },
+    "XGBoost": {
+      "accuracy": 0.8913043478260869,
+      "f1_score": 0.900990099009901,
+      "roc_auc": 0.931611669057867,
+      "details": {
+        "n_estimators": 250,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "subsample": 0.9,
+        "colsample_bytree": 0.9
+      }
+    }
+  }
+}

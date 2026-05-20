@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ "Admin Login" if login_type == "admin" else "User Login" }} | HeartCare AI{% endblock %}
+{% block content %}
+<section class="auth-layout">
+    <div class="card auth-copy">
+        <p class="eyebrow">{{ "Admin Portal" if login_type == "admin" else "User Access" }}</p>
+        <h1>{{ "Admin login" if login_type == "admin" else "User login" }}</h1>
+        <p class="lead">
+            {% if login_type == "admin" %}
+                Sign in as an administrator to monitor users and prediction activity.
+            {% else %}
+                Sign in with your registered email and password to access the prediction dashboard.
+            {% endif %}
+        </p>
+        {% if login_type == "admin" %}
+            <p class="helper-text">Admin Access: Monitor users and prediction history.</p>
+        {% endif %}
+    </div>
+
+    <form class="card auth-form" method="post">
+        <label>Email
+            <input type="email" name="email" placeholder="Enter your email" required>
+        </label>
+        <label>Password
+            <input type="password" name="password" placeholder="Enter your password" required>
+        </label>
+        <button class="button primary full" type="submit">
+            {{ "Login as Admin" if login_type == "admin" else "Login" }}
+        </button>
+    </form>
+</section>
+{% endblock %}
